@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Laboratorium & Skrining AI — Anaverse Clinical</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0a0f1c;
+    --ink-2:#131b2c;
+    --paper:#f6f4ee;
+    --paper-2:#efece2;
+    --line:#ddd7c6;
+    --monitor:#00e6a8;
+    --monitor-dim:#0a5c47;
+    --pulse:#ff5a5f;
+    --text:#0a0f1c;
+    --muted:#5b6472;
+    --muted-2:#8b93a0;
+    --radius:18px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--text);
+    font-family:'Manrope',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,h4{
+    font-family:'Space Grotesk',sans-serif;
+    margin:0;
+    letter-spacing:-0.01em;
+  }
+  .mono{font-family:'IBM Plex Mono',monospace;}
+  p{margin:0;}
+  a{text-decoration:none;color:inherit;}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 28px;}
+  ::selection{background:var(--monitor);color:var(--ink);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:.001s !important; animation-iteration-count:1 !important; transition-duration:.001s !important;}
+  }
+
+  /* ---------- reveal on scroll ---------- */
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .7s ease,transform .7s ease;}
+  .reveal.in{opacity:1;transform:translateY(0);}
+
+  /* ---------- NAV ---------- */
+  .nav{
+    position:sticky;top:0;z-index:50;
+    background:rgba(246,244,238,.86);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-inner{display:flex;align-items:center;justify-content:space-between;padding:18px 0;}
+  .brand{display:flex;align-items:center;gap:10px;font-family:'Space Grotesk';font-weight:700;font-size:1.05rem;}
+  .brand .dot{width:9px;height:9px;border-radius:50%;background:var(--monitor);box-shadow:0 0 0 0 rgba(0,230,168,.6);animation:ping 2.2s infinite;}
+  @keyframes ping{
+    0%{box-shadow:0 0 0 0 rgba(0,230,168,.45);}
+    70%{box-shadow:0 0 0 8px rgba(0,230,168,0);}
+    100%{box-shadow:0 0 0 0 rgba(0,230,168,0);}
+  }
+  .brand span{color:var(--muted);font-weight:500;}
+  .nav-links{display:flex;gap:32px;}
+  .nav-links a{
+    font-size:.86rem;font-weight:600;color:var(--muted);
+    text-transform:uppercase;letter-spacing:.04em;
+    position:relative;padding-bottom:4px;
+  }
+  .nav-links a:hover{color:var(--ink);}
+  .nav-links a::after{
+    content:"";position:absolute;left:0;bottom:0;width:0;height:2px;background:var(--monitor);transition:width .25s ease;
+  }
+  .nav-links a:hover::after{width:100%;}
+  .btn-cta{
+    background:var(--ink);color:var(--paper);font-family:'IBM Plex Mono';font-weight:600;font-size:.82rem;
+    padding:11px 20px;border-radius:10px;display:inline-flex;align-items:center;gap:8px;
+    transition:transform .2s ease, background .2s ease;
+  }
+  .btn-cta:hover{transform:translateY(-2px);background:var(--monitor-dim);}
+  @media (max-width:900px){.nav-links{display:none;}}
+
+  /* ---------- HERO ---------- */
+  .hero{background:var(--ink);color:var(--paper);position:relative;overflow:hidden;}
+  .hero::before{
+    content:"";position:absolute;inset:0;
+    background-image:
+      linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);
+    background-size:36px 36px;
+    mask-image:radial-gradient(ellipse at 30% 20%, black 40%, transparent 80%);
+    pointer-events:none;
+  }
+  .hero-inner{position:relative;padding:88px 0 0;}
+  .hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:56px;align-items:center;}
+  @media (max-width:960px){.hero-grid{grid-template-columns:1fr;}}
+
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;
+    font-family:'IBM Plex Mono';font-size:.75rem;font-weight:500;letter-spacing:.08em;
+    color:var(--monitor);text-transform:uppercase;
+    border:1px solid rgba(0,230,168,.35);background:rgba(0,230,168,.08);
+    padding:7px 14px;border-radius:20px;
+  }
+  .eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--monitor);animation:ping 2s infinite;}
+  .hero h1{
+    font-size:clamp(2.1rem,4.2vw,3.35rem);
+    line-height:1.14;font-weight:700;margin:22px 0 20px;
+  }
+  .hero h1 em{
+    font-style:normal;color:var(--monitor);
+  }
+  .hero p.lead{
+    color:#aab2c3;font-size:1.05rem;line-height:1.7;max-width:520px;
+  }
+  .hero-actions{display:flex;gap:14px;margin-top:34px;flex-wrap:wrap;}
+  .btn-primary{
+    background:var(--monitor);color:var(--ink);font-weight:700;font-family:'Space Grotesk';
+    padding:15px 26px;border-radius:12px;display:inline-flex;align-items:center;gap:10px;
+    transition:transform .2s ease,box-shadow .2s ease;
+  }
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,230,168,.25);}
+  .btn-ghost{
+    border:1px solid rgba(255,255,255,.18);color:#e7e9ee;font-weight:600;font-family:'Space Grotesk';
+    padding:15px 22px;border-radius:12px;display:inline-flex;align-items:center;gap:8px;
+    transition:border-color .2s ease,background .2s ease;
+  }
+  .btn-ghost:hover{border-color:var(--monitor);background:rgba(0,230,168,.06);}
+
+  /* monitor widget */
+  .monitor-card{
+    background:linear-gradient(180deg,#101828,#0c1220);
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:20px;padding:22px 22px 10px;
+    box-shadow:0 30px 60px rgba(0,0,0,.4);
+  }
+  .monitor-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+  .monitor-label{font-family:'IBM Plex Mono';font-size:.72rem;letter-spacing:.08em;color:var(--muted-2);text-transform:uppercase;}
+  .rec{display:flex;align-items:center;gap:6px;font-family:'IBM Plex Mono';font-size:.72rem;color:var(--pulse);}
+  .rec .dot{width:7px;height:7px;border-radius:50%;background:var(--pulse);animation:ping 1.4s infinite;}
+  .ecg-box{width:100%;height:120px;overflow:hidden;border-radius:12px;background:#0a0f1a;position:relative;}
+  .ecg-box svg{display:block;height:100%;width:200%;animation:scrollecg 4.5s linear infinite;}
+  @keyframes scrollecg{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+  .ecg-path{fill:none;stroke:var(--monitor);stroke-width:2.4;stroke-linejoin:round;stroke-linecap:round;filter:drop-shadow(0 0 6px rgba(0,230,168,.55));}
+  .readouts{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(255,255,255,.07);margin-top:16px;border-radius:12px;overflow:hidden;}
+  .readout{background:#0e1523;padding:16px 14px;}
+  .readout .k{font-family:'IBM Plex Mono';font-size:.68rem;color:var(--muted-2);letter-spacing:.06em;text-transform:uppercase;}
+  .readout .v{font-family:'IBM Plex Mono';font-size:1.25rem;font-weight:600;color:var(--paper);margin-top:6px;}
+  .readout .v span{color:var(--monitor);font-size:.8rem;margin-left:2px;}
+  .monitor-note{font-family:'IBM Plex Mono';font-size:.68rem;color:var(--muted-2);padding:12px 2px 4px;}
+
+  /* data strip */
+  .strip{
+    margin-top:70px;border-top:1px solid rgba(255,255,255,.08);
+  }
+  .strip-grid{display:grid;grid-template-columns:repeat(3,1fr);}
+  .strip-item{
+    padding:26px 8px;text-align:center;border-right:1px solid rgba(255,255,255,.08);
+  }
+  .strip-item:last-child{border-right:none;}
+  .strip-item .n{font-family:'IBM Plex Mono';font-size:1.7rem;font-weight:600;color:var(--monitor);}
+  .strip-item .l{font-family:'IBM Plex Mono';font-size:.68rem;color:var(--muted-2);letter-spacing:.06em;text-transform:uppercase;margin-top:6px;}
+  @media (max-width:700px){.strip-item .n{font-size:1.25rem;} .wrap{padding:0 18px;}}
+
+  /* ---------- SECTION HEADERS ---------- */
+  .section{padding:96px 0;}
+  .section-head{max-width:640px;margin:0 auto 48px;text-align:center;}
+  .tag{
+    font-family:'IBM Plex Mono';font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--monitor-dim);background:rgba(0,230,168,.08);border:1px solid rgba(0,230,168,.25);
+    padding:6px 13px;border-radius:20px;display:inline-block;
+  }
+  .section-head h2{font-size:clamp(1.6rem,2.6vw,2.1rem);margin-top:16px;}
+  .section-head p{color:var(--muted);margin-top:12px;line-height:1.6;}
+
+  /* ---------- FORM ---------- */
+  .lab-sheet{
+    max-width:760px;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:24px;
+    box-shadow:0 24px 60px rgba(20,20,10,.05);overflow:hidden;
+  }
+  .lab-sheet-head{
+    padding:28px 34px;border-bottom:1px dashed var(--line);
+    display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;
+  }
+  .lab-sheet-head .id{font-family:'IBM Plex Mono';font-size:.72rem;color:var(--muted-2);}
+  .lab-sheet-head h3{font-size:1.25rem;}
+  .fieldset{padding:30px 34px;border-bottom:1px solid var(--paper-2);}
+  .fieldset:last-of-type{border-bottom:none;}
+  .fs-legend{
+    display:flex;align-items:center;gap:10px;margin-bottom:22px;
+  }
+  .fs-legend .idx{
+    font-family:'IBM Plex Mono';font-size:.72rem;color:var(--paper);background:var(--ink);
+    width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;
+  }
+  .fs-legend h4{font-size:.98rem;font-weight:700;}
+  .field-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+  @media (max-width:560px){.field-grid{grid-template-columns:1fr;}}
+  .field label{
+    display:block;font-family:'IBM Plex Mono';font-size:.7rem;letter-spacing:.04em;text-transform:uppercase;
+    color:var(--muted);margin-bottom:8px;
+  }
+  .field input, .field select{
+    width:100%;border:1.5px solid var(--line);background:var(--paper);
+    border-radius:10px;padding:12px 14px;font-family:'Manrope';font-weight:600;font-size:.92rem;color:var(--ink);
+    appearance:none;-webkit-appearance:none;
+    background-image:none;
+    transition:border-color .2s ease, box-shadow .2s ease;
+  }
+  .field select{
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'><path d='M1 1l6 6 6-6' stroke='%235b6472' stroke-width='1.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background-repeat:no-repeat;background-position:right 14px center;padding-right:36px;
+  }
+  .field input:focus, .field select:focus{
+    outline:none;border-color:var(--monitor-dim);box-shadow:0 0 0 4px rgba(0,230,168,.15);
+  }
+  .submit-row{padding:8px 34px 34px;}
+  .btn-submit{
+    width:100%;background:var(--ink);color:var(--paper);font-family:'Space Grotesk';font-weight:700;
+    padding:17px;border:none;border-radius:12px;display:flex;align-items:center;justify-content:center;gap:10px;
+    cursor:pointer;transition:background .2s ease, transform .2s ease;font-size:.98rem;
+  }
+  .btn-submit:hover{background:var(--monitor-dim);transform:translateY(-2px);}
+  .btn-submit i{color:var(--monitor);}
+  .disclaimer{
+    font-family:'IBM Plex Mono';font-size:.72rem;color:var(--muted-2);line-height:1.6;
+    text-align:center;margin-top:16px;padding:0 8px;
+  }
+
+  /* ---------- LAB NOTES / TIPS ---------- */
+  .notes-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+  @media (max-width:900px){.notes-grid{grid-template-columns:1fr;}}
+  .note-card{
+    background:#fff;border:1px solid var(--line);border-radius:18px;overflow:hidden;
+    transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+  }
+  .note-card:hover{transform:translateY(-5px);box-shadow:0 18px 34px rgba(20,20,10,.07);border-color:var(--monitor-dim);}
+  .note-img{width:100%;aspect-ratio:16/10;overflow:hidden;}
+  .note-img img{width:100%;height:100%;object-fit:cover;display:block;}
+  .note-body{padding:22px 22px 26px;}
+  .note-ref{
+    display:inline-flex;align-items:center;gap:7px;font-family:'IBM Plex Mono';font-size:.68rem;
+    letter-spacing:.05em;color:var(--monitor-dim);background:rgba(0,230,168,.08);
+    padding:5px 10px;border-radius:6px;margin-bottom:14px;
+  }
+  .note-body h5{font-size:1rem;font-weight:700;line-height:1.4;margin-bottom:10px;}
+  .note-body p{color:var(--muted);font-size:.86rem;line-height:1.6;}
+
+  /* ---------- EMERGENCY ---------- */
+  .sos{
+    background:var(--ink);border-radius:24px;padding:44px;color:var(--paper);
+    display:flex;justify-content:space-between;align-items:center;gap:28px;flex-wrap:wrap;
+    position:relative;overflow:hidden;
+  }
+  .sos::after{
+    content:"";position:absolute;right:-40px;top:-40px;width:200px;height:200px;border-radius:50%;
+    background:radial-gradient(circle,rgba(0,230,168,.16),transparent 70%);
+  }
+  .sos h4{font-size:1.3rem;margin-bottom:8px;}
+  .sos p{color:var(--muted-2);max-width:420px;line-height:1.6;}
+  .phone{
+    font-family:'IBM Plex Mono';font-weight:600;font-size:1.15rem;color:var(--monitor);
+    background:rgba(0,230,168,.08);border:1px solid rgba(0,230,168,.28);
+    padding:15px 26px;border-radius:14px;display:flex;align-items:center;gap:12px;position:relative;z-index:1;
+  }
+  .phone .dot{width:7px;height:7px;border-radius:50%;background:var(--pulse);animation:ping 1.4s infinite;}
+
+  footer{padding:36px 0;text-align:center;}
+  footer p{font-family:'IBM Plex Mono';font-size:.72rem;color:var(--muted-2);}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="#"><span class="dot"></span>ANAVERSE <span>/ CLINICAL LAB</span></a>
+    <div class="nav-links">
+      <a href="#">Laboratorium Utama</a>
+      <a href="#skrining-ai">Skrining Biometrik AI</a>
+      <a href="#lab-notes">Edukasi &amp; Riset</a>
+    </div>
+    <a href="#skrining-ai" class="btn-cta"><i class="fa-solid fa-wave-square"></i> Mulai Uji Klinis</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="wrap hero-inner">
+    <div class="hero-grid">
+      <div class="reveal in">
+        <span class="eyebrow"><span class="dot"></span>Panel Diagnostik Digital</span>
+        <h1>Data laboratorium Anda, dibaca sebelum menjadi <em>risiko jantung.</em></h1>
+        <p class="lead">Masukkan riwayat klinis dan kebiasaan harian Anda — mesin prediksi kami menghitung parameter biometrik secara instan untuk mendeteksi potensi risiko kardiovaskular sejak dini.</p>
+        <div class="hero-actions">
+          <a href="#skrining-ai" class="btn-primary"><i class="fa-solid fa-flask-vial"></i> Mulai Skrining</a>
+          <a href="#lab-notes" class="btn-ghost">Pelajari Cara Kerja</a>
+        </div>
+      </div>
+
+      <div class="reveal in">
+        <div class="monitor-card">
+          <div class="monitor-top">
+            <span class="monitor-label">Monitor EKG — Ilustrasi</span>
+            <span class="rec"><span class="dot"></span>REKAM AKTIF</span>
+          </div>
+          <div class="ecg-box">
+            <svg viewBox="0 0 800 100" preserveAspectRatio="none">
+              <path class="ecg-path" d="M0,50 H150 L172,50 L184,20 L198,80 L212,10 L226,65 L240,50 H400
+                                          M400,50 H550 L572,50 L584,20 L598,80 L612,10 L626,65 L640,50 H800"/>
+            </svg>
+          </div>
+          <div class="readouts">
+            <div class="readout"><div class="k">Parameter</div><div class="v">15<span>+</span></div></div>
+            <div class="readout"><div class="k">Akurasi</div><div class="v">99.4<span>%</span></div></div>
+            <div class="readout"><div class="k">Komputasi</div><div class="v">&lt;1<span>dtk</span></div></div>
+          </div>
+          <div class="monitor-note">* Visualisasi gelombang bersifat ilustratif, bukan pembacaan alat medis.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="strip">
+      <div class="wrap">
+        <div class="strip-grid">
+          <div class="strip-item"><div class="n">99.4%</div><div class="l">Akurasi Engine Prediksi</div></div>
+          <div class="strip-item"><div class="n">15+</div><div class="l">Parameter Lab Terintegrasi</div></div>
+          <div class="strip-item"><div class="n">Real-Time</div><div class="l">Kecepatan Komputasi Klinis</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="skrining-ai" class="section">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="tag">Biometric Calculator Engine</span>
+      <h2>Formulir skrining risiko kardiovaskular</h2>
+      <p>Isi data rekam laboratorium Anda dengan lengkap dan akurat. Semua kolom digunakan langsung oleh mesin prediksi untuk menghitung hasil.</p>
+    </div>
+
+    <div class="lab-sheet reveal">
+      <div class="lab-sheet-head">
+        <div>
+          <h3>Formulir Skrining Pasien</h3>
+          <div class="id">REF: ANV-SCR-{{auto}} · 3 bagian</div>
+        </div>
+        <i class="fa-solid fa-file-waveform" style="font-size:1.4rem;color:var(--monitor-dim);"></i>
+      </div>
+
+      <form action="/predict" method="POST">
+
+        <div class="fieldset">
+          <div class="fs-legend"><span class="idx">A</span><h4>Data Demografis</h4></div>
+          <div class="field-grid">
+            <div class="field">
+              <label>Usia Pasien (Tahun)</label>
+              <input type="number" name="age" placeholder="Contoh: 45" required min="1" max="120">
+            </div>
+            <div class="field">
+              <label>Jenis Kelamin Medis</label>
+              <select name="gender">
+                <option value="1">Laki-laki</option>
+                <option value="0">Perempuan</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="fieldset">
+          <div class="fs-legend"><span class="idx">B</span><h4>Riwayat &amp; Hasil Klinis</h4></div>
+          <div class="field-grid">
+            <div class="field">
+              <label>Kolesterol Serum Total (mg/dL)</label>
+              <input type="number" name="cholesterol_level" placeholder="Metrik angka lab" required min="100" max="400">
+            </div>
+            <div class="field">
+              <label>Hasil Pemeriksaan EKG</label>
+              <select name="EKG_results">
+                <option value="0">Normal Sinus Rhythm</option>
+                <option value="1">Abnormal / Indikasi Kelainan</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Hipertensi</label>
+              <select name="hypertension">
+                <option value="0">Negatif / Normal</option>
+                <option value="1">Positif Hipertensi</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Diabetes</label>
+              <select name="diabetes">
+                <option value="0">Negatif / Normal</option>
+                <option value="1">Positif Diabetes</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="fieldset">
+          <div class="fs-legend"><span class="idx">C</span><h4>Gaya Hidup &amp; Kebiasaan</h4></div>
+          <div class="field-grid">
+            <div class="field">
+              <label>Riwayat Konsumsi Rokok</label>
+              <select name="smoking_status">
+                <option value="0">Tidak Pernah Merokok</option>
+                <option value="1">Mantan Perokok</option>
+                <option value="2">Perokok Aktif</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Konsumsi Minuman Beralkohol</label>
+              <select name="alcohol_consumption">
+                <option value="0">Tidak Pernah</option>
+                <option value="1">Rendah – Sedang</option>
+                <option value="2">Intensitas Tinggi</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Intensitas Aktivitas Fisik</label>
+              <select name="physical_activity">
+                <option value="2">Tinggi (Rutin Berolahraga)</option>
+                <option value="1">Sedang (Jalan Ringan Harian)</option>
+                <option value="0">Rendah (Sedentari)</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Pola Diet Makanan</label>
+              <select name="dietary_habits">
+                <option value="1">Nutrisi Sehat (Tinggi Serat)</option>
+                <option value="0">Nutrisi Kurang Sehat (Tinggi Lemak)</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Tingkat Tekanan Stres</label>
+              <select name="stress_level">
+                <option value="0">Rendah / Terkontrol</option>
+                <option value="1">Sedang / Normal</option>
+                <option value="2">Tinggi / Berat</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Rata-rata Tidur Harian (Jam)</label>
+              <input type="number" step="0.1" name="sleep_hours" placeholder="Contoh: 7" required min="3" max="12">
+            </div>
+          </div>
+        </div>
+
+        <div class="submit-row">
+          <button type="submit" class="btn-submit"><i class="fa-solid fa-wave-square"></i> Proses Prediksi Laboratorium</button>
+          <p class="disclaimer">Hasil skrining bersifat prediktif dan tidak menggantikan diagnosis dokter. Selalu konsultasikan hasil dengan tenaga medis profesional.</p>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<section id="lab-notes" class="section" style="background:var(--paper-2);">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="tag">Clinical Insights</span>
+      <h2>Catatan laboratorium</h2>
+      <p>Ringkasan singkat dari tim klinis kami tentang kebiasaan yang paling berpengaruh pada hasil skrining Anda.</p>
+    </div>
+
+    <div class="notes-grid">
+      <div class="note-card reveal">
+        <div class="note-img"><img src="/static/image/nutrisi.jpeg" alt="Pola Nutrisi Serat Alami"></div>
+        <div class="note-body">
+          <span class="note-ref"><i class="fa-solid fa-basket-shopping"></i> REF-01 · NUTRISI</span>
+          <h5>Pola konsumsi serat rendah kolesterol</h5>
+          <p>Ragam sayur segar dan buah membantu menjaga kestabilan lemak serum darah secara berkala.</p>
+        </div>
+      </div>
+      <div class="note-card reveal">
+        <div class="note-img"><img src="/static/image/kardio.jpeg" alt="Aktivitas Fisik"></div>
+        <div class="note-body">
+          <span class="note-ref"><i class="fa-solid fa-heartpulse"></i> REF-02 · KARDIO</span>
+          <h5>Aktivitas fisik pendukung jantung</h5>
+          <p>Latihan kardio intensitas sedang memicu efisiensi pompa jantung dan kestabilan kelistrikan bilik jantung.</p>
+        </div>
+      </div>
+      <div class="note-card reveal">
+        <div class="note-img"><img src="/static/image/mental.jpeg" alt="Manajemen Stres"></div>
+        <div class="note-body">
+          <span class="note-ref"><i class="fa-solid fa-brain"></i> REF-03 · MENTAL</span>
+          <h5>Manajemen stres &amp; regulasi kortisol</h5>
+          <p>Meditasi dan teknik pernapasan dalam membantu menekan hormon pemicu hipertensi kronis.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="wrap" style="padding-bottom:90px;">
+  <div class="sos reveal">
+    <div>
+      <h4>Butuh bantuan membaca hasil?</h4>
+      <p>Hubungi pusat layanan laboratorium terintegrasi kami jika Anda mengalami kesulitan mengisi atau menafsirkan data biometrik.</p>
+    </div>
+    <div class="phone"><span class="dot"></span><i class="fa-solid fa-headset"></i> (021) 9876 5432</div>
+  </div>
+</section>
+
+<footer>
+  <p>ANAVERSE CLINICAL LAB © 2026 — Sistem skrining ini bersifat prediktif, bukan alat diagnosis medis.</p>
+</footer>
+
+<script>
+  // scroll reveal
+  const els = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  },{threshold:.15});
+  els.forEach(el=>io.observe(el));
+</script>
+</body>
+</html>
