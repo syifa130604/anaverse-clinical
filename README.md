@@ -6,14 +6,11 @@
 
 ## 👨‍🎓 Identitas Pengembang
 
-<p align="center">
-  <img src="assets/foto-profil.jpg" alt="Foto Profil Pengembang" width="160" style="border-radius: 50%;">
-</p>
 
-- **Nama:** [Isi Nama Lengkap Kamu]
-- **Kelas:** [Isi Kelas Kamu]
-- **Mata Kuliah:** Pembelajaran Mesin / *Machine Learning*
-- **Dosen Pembimbing:** Pak Bayu
+- **Nama:** Syifa Kanita Putri G
+- **Kelas:** 4C
+- **Mata Kuliah:** UAI KECERDASAN BUATAN
+- **NIM:** 301240016
 
 ---
 
